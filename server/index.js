@@ -7,6 +7,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
 const db = mysql.createPool({
     host: 'localhost',
@@ -83,6 +84,10 @@ app.delete('/api/delete_record/:id', async (req, res) => {
         console.error(err);
         res.status(500).json({ error: err.message });
     }
+});
+
+app.get(/.*/, (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
 });
 
 app.listen(3001, () => console.log('Server running on 3001'));
