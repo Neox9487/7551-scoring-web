@@ -15,6 +15,7 @@
 
 /* --- Global Styles --- */
 body {
+  user-select: none;
   background-color: var(--dark-bg);
   background-image: radial-gradient(circle at 50% 0%, #2e2e3a 0%, var(--dark-bg) 70%);
   background-attachment: fixed;

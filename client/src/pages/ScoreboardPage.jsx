@@ -96,7 +96,7 @@ const ScoreboardPage = () => {
                         <thead>
                             <tr>
                                 <th>隊號</th>
-                                <th>主要打法</th>
+                                <th>打法</th>
                                 <th>自動進球</th>
                                 <th>自動吊掛</th>
                                 <th>Intake</th>
