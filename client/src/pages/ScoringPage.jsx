@@ -100,7 +100,7 @@ const ScoutingPage = () => {
                         <option value="攻擊">攻擊</option>
                         <option value="推球助攻">推球助攻</option>
                         <option value="給human球">給 human 球</option>
-                        <option value="廢物">fw</option>
+                        <option value="廢物">廢物</option>
                     </select>
                 </div>
                 <div className="form-group">
