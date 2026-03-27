@@ -8,7 +8,7 @@ const TeamDetailPage = () => {
     const [records, setRecords] = useState([]);
 
     const fetchTeamRecords = () => {
-        axios.get(`http://localhost:3001/api/team_records/${teamId}`)
+        axios.get(`/api/team_records/${teamId}`)
             .then(res => setRecords(res.data))
             .catch(err => console.error(err));
     };
@@ -20,7 +20,7 @@ const TeamDetailPage = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("確定要刪除這筆紀錄嗎？")) return;
         try {
-            await axios.delete(`http://localhost:3001/api/delete_record/${id}`);
+            await axios.delete(`/api/delete_record/${id}`);
             setRecords(prev => prev.filter(r => r.id !== id));
         } catch (err) {
             alert("刪除失敗");

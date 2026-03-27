@@ -17,7 +17,7 @@ const ScoutingPage = () => {
     });
 
     useEffect(() => {
-        axios.get('http://localhost:3001/api/teams')
+        axios.get('/api/teams')
             .then(res => setTeams(res.data))
             .catch(err => console.error("無法取得隊伍清單"));
     }, []);
@@ -30,7 +30,7 @@ const ScoutingPage = () => {
     const handleSave = async () => {
         if (form.team_number === '未選擇') return alert("請先選擇隊伍號碼！");
         try {
-            await axios.post('http://localhost:3001/api/save_data', form);
+            await axios.post('/api/save_data', form);
             alert("資料儲存成功！");
             setForm(prev => ({ ...prev, match_id: '', remark: '', auto_max_score: 0 }));
         } catch (err) {
@@ -86,7 +86,7 @@ const ScoutingPage = () => {
                     </select>
                 </div>
                 <div className="form-group">
-                    <label>Intake 形式</label>
+                    <label>Intake</label>
                     <select name="intake" value={form.intake} onChange={handleChange}>
                         <option value="無">無</option>
                         <option value="有">有</option>
@@ -99,8 +99,8 @@ const ScoutingPage = () => {
                         <option value="防守">防守</option>
                         <option value="攻擊">攻擊</option>
                         <option value="推球助攻">推球助攻</option>
-                        <option value="給 human 球">給 human 球</option>
-                        <option value="fw">fw</option>
+                        <option value="給human球">給 human 球</option>
+                        <option value="廢物">fw</option>
                     </select>
                 </div>
                 <div className="form-group">

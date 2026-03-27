@@ -9,7 +9,7 @@ const ScoreboardPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get('http://localhost:3001/api/all_records')
+        axios.get('/api/all_records')
             .then(res => setRecords(res.data))
             .catch(err => console.error(err));
     }, []);
@@ -34,7 +34,7 @@ const ScoreboardPage = () => {
         if (!window.confirm("確定要刪除這筆紀錄嗎？此操作不可還原。")) return;
 
         try {
-            await axios.delete(`http://localhost:3001/api/delete_record/${id}`);
+            await axios.delete(`/api/delete_record/${id}`);
             setRecords(prev => prev.filter(r => r.id !== id));
         } catch (err) {
             alert("刪除失敗，請檢查後端連線");
