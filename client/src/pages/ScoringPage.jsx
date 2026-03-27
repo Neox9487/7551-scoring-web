@@ -29,8 +29,14 @@ const ScoutingPage = () => {
 
     const handleSave = async () => {
         if (form.team_number === '未選擇') return alert("請先選擇隊伍號碼！");
+
+        const payload = {
+            ...form,
+            auto_max_score: form.auto_max_score === '' ? 0 : Number(form.auto_max_score)
+        };
+
         try {
-            await axios.post('/api/save_data', form);
+            await axios.post('/api/save_data', payload);
             alert("資料儲存成功！");
             setForm(prev => ({ ...prev, match_id: '', remark: '', auto_max_score: 0 }));
         } catch (err) {
@@ -65,7 +71,10 @@ const ScoutingPage = () => {
                 </div>
                 <div className="form-group">
                     <label>自動最高進球數</label>
-                    <input name="auto_max_score" type="number" value={form.auto_max_score} onChange={e => setForm({...form, auto_max_score: parseInt(e.target.value) || 0})} />
+                    <input name="auto_max_score" type="number" value={form.auto_max_score}onChange={e => {
+                        const val = e.target.value;
+                        setForm({ ...form, auto_max_score: val === '' ? 0 : parseInt(val) });
+                    }} />
                 </div>
                 <div className="form-group">
                     <label>自動吊掛</label>
