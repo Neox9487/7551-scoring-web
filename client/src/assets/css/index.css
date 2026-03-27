@@ -1,0 +1,316 @@
+:root {
+  --pink: #ff66aa;
+  --pink-light: #ff88bb;
+  --pink-dark: #cc5288;
+  --dark-bg: #1c1c22;
+  --card-bg: #2a2a32;
+  --item-bg: #383842;
+  --text: #ffffff;
+  --text-dim: #b3b3bc;
+  --radius-lg: 15px;
+  --radius-md: 10px;
+  --radius-pill: 50px;
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- Global Styles --- */
+body {
+  background-color: var(--dark-bg);
+  background-image: radial-gradient(circle at 50% 0%, #2e2e3a 0%, var(--dark-bg) 70%);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: 'Exo 2', 'Inter', 'Microsoft JhengHei', sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* --- Typography --- */
+h1, h2, h3 {
+  color: var(--pink);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 1.5rem;
+}
+
+h1 {
+  font-size: 2.2rem;
+  text-align: center;
+  text-shadow: 0 0 20px rgba(255, 102, 170, 0.3);
+}
+
+h2 {
+  font-size: 1.2rem;
+  border-left: 6px solid var(--pink);
+  padding-left: 15px;
+  background: linear-gradient(90deg, rgba(255, 102, 170, 0.1) 0%, transparent 100%);
+}
+
+/* --- Navbar Styles --- */
+.nav {
+  background: rgba(28, 28, 34, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 3px solid var(--pink);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 10px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.nav-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 20px;
+}
+
+.nav-btn {
+  background: transparent;
+  color: white;
+  border: 2px solid transparent;
+  padding: 8px 25px;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: var(--transition);
+  text-transform: uppercase;
+}
+
+.nav-btn:hover {
+  color: var(--pink);
+  background: rgba(255, 102, 170, 0.1);
+  transform: translateY(-2px);
+}
+
+.nav-btn:active, .nav-btn:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 15px rgba(255, 102, 170, 0.3);
+}
+
+nav a {
+  text-decoration: none;
+}
+
+/* --- Cards & Sections --- */
+section, .card {
+  background: var(--card-bg);
+  padding: 25px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 25px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* --- Forms & Inputs --- */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: var(--pink);
+  text-transform: uppercase;
+}
+
+input, select, textarea {
+  background: var(--item-bg);
+  border: 2px solid transparent;
+  color: var(--text);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--pink);
+  background: #444452;
+  box-shadow: 0 0 12px rgba(255, 102, 170, 0.2);
+}
+
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ff66aa%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px top 50%;
+  background-size: 12px auto;
+  padding-right: 40px;
+}
+
+/* --- Buttons --- */
+.submit-btn {
+  background: var(--pink) !important;
+  color: white !important;
+  font-size: 1.1rem;
+  font-weight: 800;
+  padding: 18px;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  transition: var(--transition);
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+.submit-btn:hover {
+  filter: brightness(1.1);
+  transform: scale(1.02);
+  box-shadow: 0 0 30px rgba(255, 102, 170, 0.4);
+}
+
+.view-btn {
+  background: var(--item-bg);
+  color: var(--pink);
+  border: 1px solid var(--pink);
+  padding: 6px 18px;
+  border-radius: var(--radius-pill);
+  font-weight: bold;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: var(--transition);
+  text-transform: uppercase;
+}
+
+.view-btn:hover {
+  background: var(--pink);
+  color: white;
+  box-shadow: 0 0 15px rgba(255, 102, 170, 0.4);
+}
+
+/* --- Scoreboard Specific (Table) --- */
+.table-wrapper {
+  overflow-x: auto;
+  padding: 15px;
+  margin: 0 -15px;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+
+th {
+  color: var(--pink);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  padding: 10px 20px;
+  text-align: left;
+}
+
+tbody tr {
+  background: var(--card-bg);
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+tbody tr:hover {
+  background: var(--item-bg);
+  transform: translateX(6px);
+  box-shadow: -6px 0 0 var(--pink), 0 5px 15px rgba(0,0,0,0.3);
+}
+
+td {
+  padding: 15px 20px;
+  white-space: nowrap;
+}
+
+.highlight {
+  color: var(--pink-light);
+}
+
+td:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); font-weight: bold; color: var(--pink); }
+td:last-child { border-radius: 0 var(--radius-md) var(--radius-md) 0; text-align: right; }
+
+.delete-btn {
+  background: transparent;
+  color: #ff4444; /* 警示紅 */
+  border: 1px solid #ff4444;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.delete-btn:hover {
+  background: #ff4444;
+  color: white;
+  box-shadow: 0 0 12px rgba(255, 68, 68, 0.4);
+  transform: scale(1.05);
+}
+
+td:last-child {
+  text-align: left;
+}
+
+/* --- Team Detail: Stats Grid --- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  border-bottom: 4px solid var(--item-bg);
+}
+
+.stat-card.highlight { border-bottom-color: var(--pink); }
+.stat-label { display: block; font-size: 0.75rem; color: var(--pink); font-weight: bold; margin-bottom: 8px; }
+.stat-value { font-size: 1.8rem; font-weight: 800; }
+
+/* --- Team Detail: History Logs --- */
+.history-item {
+  background: var(--card-bg);
+  margin-bottom: 12px;
+  border-radius: var(--radius-md);
+  padding: 18px;
+  border-left: 4px solid var(--item-bg);
+  transition: var(--transition);
+}
+
+.history-item:hover { border-left-color: var(--pink); background: var(--item-bg); }
+
+.history-header { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.85rem; }
+.match-tag { background: var(--pink); color: white; padding: 2px 10px; border-radius: 20px; font-weight: bold; }
+.time-tag { color: var(--text-dim); }
+
+.history-content { display: flex; flex-wrap: wrap; gap: 8px; }
+.info-badge { background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; }
+.info-badge b { color: var(--pink); }
+.info-badge.highlight { border: 1px solid rgba(255, 102, 170, 0.3); color: var(--pink-light); }
+
+.history-remark { margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); color: var(--text-dim); font-size: 0.85rem; }
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--dark-bg); }
+::-webkit-scrollbar-thumb { background: var(--item-bg); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--pink); }
