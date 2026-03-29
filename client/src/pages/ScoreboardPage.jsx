@@ -15,25 +15,30 @@ const ScoreboardPage = () => {
             .catch(err => console.error(err));
     }, []);
 
+    const handleViewModeChange = (e) => {
+        const newMode = e.target.value;
+        setViewMode(newMode);
+        if (newMode === 'all' && filter.strategy === '不固定') {
+            setFilter(prev => ({ ...prev, strategy: 'All' }));
+        }
+    };
+
     const filteredRecords = useMemo(() => {
         return records
             .filter(r => (filter.strategy === 'All' || r.strategy === filter.strategy))
             .filter(r => String(r.team_number).includes(filter.team))
             .sort((a, b) => {
-                if (sortKey === 'created_at') {
-                    return new Date(b.created_at) - new Date(a.created_at);
-                }
-                if (sortKey === 'team_number') {
-                    return Number(a.team_number) - Number(b.team_number);
-                }
+                if (sortKey === 'created_at') return new Date(b.created_at) - new Date(a.created_at);
+                if (sortKey === 'team_number') return Number(a.team_number) - Number(b.team_number);
                 return b[sortKey] - a[sortKey];
             });
     }, [records, filter, sortKey]);
 
     const teamSummary = useMemo(() => {
         const groups = {};
-        
-        filteredRecords.forEach(r => {
+        const baseRecords = records.filter(r => String(r.team_number).includes(filter.team));
+
+        baseRecords.forEach(r => {
             if (!groups[r.team_number]) {
                 groups[r.team_number] = {
                     team_number: r.team_number,
@@ -55,21 +60,24 @@ const ScoreboardPage = () => {
         });
 
         return Object.values(groups).map(g => {
-            const keys = Object.keys(g.strategies);
-            const topStrategy = keys.reduce((a, b) => g.strategies[a] > g.strategies[b] ? a : b);
-            const isDiverse = keys.length > 1 && new Set(Object.values(g.strategies)).size === 1;
-            
+            const strategyCounts = Object.values(g.strategies);
+            const maxCount = Math.max(...strategyCounts);
+            const topStrategies = Object.keys(g.strategies).filter(key => g.strategies[key] === maxCount);
+            const mainStrategy = topStrategies.length > 1 ? "不固定" : topStrategies[0];
+
             return {
                 ...g,
                 avgScore: (g.totalScore / g.count).toFixed(1),
-                mainStrategy: isDiverse ? "不固定" : topStrategy
+                mainStrategy: mainStrategy
             };
-        }).sort((a, b) => {
+        })
+        .filter(t => filter.strategy === 'All' || t.mainStrategy === filter.strategy)
+        .sort((a, b) => {
             if (sortKey === 'team_number') return Number(a.team_number) - Number(b.team_number);
             if (sortKey === 'created_at') return new Date(b.latestTime) - new Date(a.latestTime);
             return b.maxScore - a.maxScore;
         });
-    }, [filteredRecords, sortKey]);
+    }, [records, filter, sortKey]);
 
     const handleDelete = async (e, id) => {
         e.stopPropagation();
@@ -77,9 +85,7 @@ const ScoreboardPage = () => {
         try {
             await axios.delete(`/api/delete_record/${id}`);
             setRecords(prev => prev.filter(r => r.id !== id));
-        } catch (err) {
-            alert("刪除失敗");
-        }
+        } catch (err) { alert("刪除失敗"); }
     };
 
     return (
@@ -87,7 +93,7 @@ const ScoreboardPage = () => {
             <section className="card" style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
                 <div style={{ flex: 1, minWidth: '150px' }}>
                     <label>檢視模式</label>
-                    <select value={viewMode} onChange={e => setViewMode(e.target.value)}>
+                    <select value={viewMode} onChange={handleViewModeChange}>
                         <option value="all">所有場次紀錄</option>
                         <option value="summary">隊伍表現摘要</option>
                     </select>
@@ -110,6 +116,7 @@ const ScoreboardPage = () => {
                         {['防守', '攻擊', '推球助攻', '給 human 球', '廢物'].map(s => (
                             <option key={s} value={s}>{s}</option>
                         ))}
+                        {viewMode === 'summary' && <option value="不固定">不固定</option>}
                     </select>
                 </div>
 
@@ -128,12 +135,7 @@ const ScoreboardPage = () => {
                     <table>
                         <thead>
                             <tr>
-                                <th>隊號</th>
-                                <th>場次</th>
-                                <th>打法</th>
-                                <th>自動進球</th>
-                                <th>自動吊掛</th>
-                                <th>操作</th>
+                                <th>隊號</th><th>場次</th><th>打法</th><th>自動進球</th><th>自動吊掛</th><th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -144,9 +146,7 @@ const ScoreboardPage = () => {
                                     <td className='highlight'>{r.strategy}</td>
                                     <td>{r.auto_max_score}</td>
                                     <td>{r.auto_climb}</td>
-                                    <td>
-                                        <button className="delete-btn" onClick={(e) => handleDelete(e, r.id)}>刪除</button>
-                                    </td>
+                                    <td><button className="delete-btn" onClick={(e) => handleDelete(e, r.id)}>刪除</button></td>
                                 </tr>
                             ))}
                         </tbody>
@@ -155,12 +155,7 @@ const ScoreboardPage = () => {
                     <table>
                         <thead>
                             <tr>
-                                <th>隊號</th>
-                                <th>總場次</th>
-                                <th>主要打法</th>
-                                <th>平均自動進球</th>
-                                <th>最高自動進球</th>
-                                <th>操作</th>
+                                <th>隊號</th><th>總場次</th><th>主要打法</th><th>平均自動進球</th><th>最高自動進球</th><th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -171,9 +166,7 @@ const ScoreboardPage = () => {
                                     <td className='highlight'>{t.mainStrategy}</td>
                                     <td style={{color: 'var(--pink)'}}><b>{t.avgScore}</b></td>
                                     <td>{t.maxScore}</td>
-                                    <td>
-                                        <button className="view-btn" style={{padding: '4px 8px'}}>詳情</button>
-                                    </td>
+                                    <td><button className="view-btn" style={{padding: '4px 8px'}}>詳情</button></td>
                                 </tr>
                             ))}
                         </tbody>
