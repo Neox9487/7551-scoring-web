@@ -355,8 +355,4 @@ td:last-child {
     padding: 10px 8px; 
   }
 
-  th:nth-child(5), td:nth-child(5),
-  th:nth-child(6), td:nth-child(6) {
-    display: none;
-  }
 }
