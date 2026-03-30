@@ -1,9 +1,8 @@
 # 網站架設
->如果是以區域網路連線，可以直接輸入 http::/(伺服器電腦 ip):3001 連線網站，不用操作第4步
 ## 前置動作
 在電腦上這些軟體來跑這個網站
 - Node.js (https://nodejs.org/zh-tw/download)
-- Ngrok (https://ngrok.com/)
+- Ngrok 想要發佈到網際網路上才需要裝 (https://ngrok.com/)
 - MySQL (安裝教學 https://chwang12341.medium.com/mysql-%E5%AD%B8%E7%BF%92%E7%AD%86%E8%A8%98-%E4%BA%8C-%E4%B8%80%E5%88%86%E9%90%98%E8%BC%95%E9%AC%86%E7%9E%AD%E8%A7%A3%E5%A6%82%E4%BD%95%E5%9C%A8windows%E4%B8%8A%E5%AE%89%E8%A3%9Dmysql-63cce07c6a6c)
 
 安裝好後打開 cmd 輸入
@@ -65,6 +64,8 @@ node index.js
 ```
 
 ## 4. 發佈到網際網路上
+>如果是以區域網路連線，可以直接輸入 http::/(伺服器電腦 ip):3001 連線網站，不用操作這個步驟
+
 打開 cmd 後，輸入
 ```
 ngrok http 3001
@@ -88,4 +89,4 @@ ngrok http 3001
 可以點擊欄位的資料列來進入此資料隊伍的詳細頁面
 
 ## 刪除資料
-可以透過操作欄位或隊伍詳細頁 HISTORY LOHS的 `刪除` 按鈕刪除資料
+可以透過操作欄位或隊伍詳細頁 HISTORY LOHS 內場次紀錄的 `刪除` 按鈕刪除資料
