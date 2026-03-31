@@ -148,7 +148,7 @@ const ScoreboardPage = () => {
                         {viewMode === 'all' ? (
                             <>
                                 <option value="created_at">紀錄時間</option>
-                                <option value="match_id">場次編號</option>
+                                <option value="match_id">場次</option>
                             </>
                         ) : (
                             <option value="avgScore">平均自動進球</option>
