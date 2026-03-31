@@ -42,7 +42,6 @@ async function initDB() {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         `;
         await pool.query(createTableSql);
-        console.log('資料庫與資料表初始化成功');
     } catch (err) {
         console.error('資料庫初始化失敗:', err);
     }
