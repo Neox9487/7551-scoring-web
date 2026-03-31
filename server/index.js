@@ -19,7 +19,6 @@ const db = mysql.createPool({
     queueLimit: 0
 }).promise();
 
-// get team lists
 app.get('/api/teams', async (req, res) => {
     try {
         const filePath = path.join(__dirname, 'matches.json');
@@ -27,12 +26,11 @@ app.get('/api/teams', async (req, res) => {
         const matchData = JSON.parse(data);
         res.json(matchData);
     } catch (err) {
-        console.error('讀取 matches.json 失敗:', err);
+        console.error(err);
         res.json({ practice: [], qualification: [] }); 
     }
 });
 
-// save new data
 app.post('/api/save_data', async (req, res) => {
     try {
         const d = req.body;
@@ -45,41 +43,38 @@ app.post('/api/save_data', async (req, res) => {
             d.auto_climb, d.fixed_shot_pos, d.intake, d.strategy, d.climb_level, d.remark
         ]);
         res.status(201).json({ message: "儲存成功" });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { 
+        res.status(500).json({ error: err.message }); 
+    }
 });
 
-// get all records
 app.get('/api/all_records', async (req, res) => {
     try {
         const [rows] = await db.execute('SELECT * FROM records ORDER BY created_at DESC');
         res.json(rows);
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { 
+        res.status(500).json({ error: err.message }); 
+    }
 });
 
-// get target team records
 app.get('/api/team_records/:number', async (req, res) => {
     try {
         const [rows] = await db.execute('SELECT * FROM records WHERE team_number = ? ORDER BY created_at DESC', [req.params.number]);
         res.json(rows);
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { 
+        res.status(500).json({ error: err.message }); 
+    }
 });
 
-// delete record
 app.delete('/api/delete_record/:id', async (req, res) => {
     try {
-        const id = req.params.id;
-        const sql = 'DELETE FROM records WHERE id = ?';
-        
-        const [result] = await db.execute(sql, [id]);
-
+        const [result] = await db.execute('DELETE FROM records WHERE id = ?', [req.params.id]);
         if (result.affectedRows > 0) {
-            console.log(`DELETE /api/delete_record/${id} - 刪除成功`);
             res.json({ message: "紀錄已刪除" });
         } else {
             res.status(404).json({ error: "找不到該筆紀錄" });
         }
     } catch (err) {
-        console.error(err);
         res.status(500).json({ error: err.message });
     }
 });
