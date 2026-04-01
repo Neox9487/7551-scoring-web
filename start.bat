@@ -1,8 +1,9 @@
 @echo off
 setlocal enabledelayedexpansion
-title FRC Scouting System Launcher
+title System Launcher
 set PORT=3001
 
+:CHECK_ENV
 node -v >nul 2>&1
 if %ERRORLEVEL% neq 0 (
     echo [!] ERROR: Node.js is not installed.
@@ -46,20 +47,20 @@ set /p choice="Please enter your choice (1-4): "
 
 if "%choice%"=="1" goto :SET_LOCAL
 if "%choice%"=="2" goto :SET_NGROK
-if "%choice%"=="3" goto :CHECK_ENV
+if "%choice%"=="3" goto :CHECK_DEPENDENCIES
 if "%choice%"=="4" exit
 
 exit
 
 :SET_LOCAL
 set MODE=LOCAL
-goto :CHECK_ENV
+goto :CHECK_DEPENDENCIES
 
 :SET_NGROK
 set MODE=NGROK
-goto :CHECK_ENV
+goto :CHECK_DEPENDENCIES
 
-:CHECK_ENV
+:CHECK_DEPENDENCIES
 cls
 echo [1/2] Validating Frontend...
 cd /d "%~dp0client"
