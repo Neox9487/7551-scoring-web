@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
@@ -13,19 +14,93 @@ const logger = {
 };
 
 app.use(morgan('dev')); 
-
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
 const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
 }).promise();
+
+app.get('/api/teams', async (req, res) => {
+    try {
+        const filePath = path.join(__dirname, 'matches.json');
+        const data = await fs.readFile(filePath, 'utf8');
+        const matchData = JSON.parse(data);
+        res.json(matchData);
+    } catch (err) {
+        logger.error('Failed to read matches.json', err);
+        res.json({ practice: [], qualification: [] }); 
+    }
+});
+
+app.post('/api/save_data', async (req, res) => {
+    try {
+        const d = req.body;
+        const sql = `INSERT INTO records 
+        (team_number, match_id, match_type, station, auto_shot_pos, auto_max_score, auto_climb, fixed_shot_pos, intake, strategy, climb_level, remark) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+        await pool.execute(sql, [
+            d.team_number, d.match_id, d.match_type, d.station, d.auto_shot_pos, d.auto_max_score, 
+            d.auto_climb, d.fixed_shot_pos, d.intake, d.strategy, d.climb_level, d.remark
+        ]);
+        
+        logger.info(`Record added: Team ${d.team_number}, Match ${d.match_id}`);
+        res.status(201).json({ message: "Data saved successfully" });
+    } catch (err) { 
+        logger.error('Failed to save record', err);
+        res.status(500).json({ error: "Internal Server Error" }); 
+    }
+});
+
+app.get('/api/all_records', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT * FROM records ORDER BY created_at DESC');
+        res.json(rows);
+    } catch (err) { 
+        logger.error('Failed to fetch all records', err);
+        res.status(500).json({ error: "Internal Server Error" }); 
+    }
+});
+
+app.get('/api/team_records/:number', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT * FROM records WHERE team_number = ? ORDER BY created_at DESC', [req.params.number]);
+        res.json(rows);
+    } catch (err) { 
+        logger.error(`Failed to fetch records for Team ${req.params.number}`, err);
+        res.status(500).json({ error: "Internal Server Error" }); 
+    }
+});
+
+app.delete('/api/delete_record/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const [result] = await pool.execute('DELETE FROM records WHERE id = ?', [id]);
+
+        if (result.affectedRows > 0) {
+            logger.info(`Record deleted, ID: ${id}`);
+            res.json({ message: "Record deleted successfully" });
+        } else {
+            res.status(404).json({ error: "Record not found" });
+        }
+    } catch (err) {
+        logger.error(`Failed to delete record ID ${req.params.id}`, err);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+app.get(/.*/, (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+});
+
+const PORT = 3001;
 
 async function initDB() {
     try {
@@ -51,88 +126,23 @@ async function initDB() {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         `;
         await pool.query(createTableSql);
-        logger.info('資料庫與資料表初始化成功');
+        logger.info('Database and table initialized successfully');
     } catch (err) {
-        logger.error('資料庫初始化失敗', err);
+        logger.error('Database initialization failed', err);
+        process.exit(1); 
     }
 }
 
-initDB();
-
-app.get('/api/teams', async (req, res) => {
+async function startServer() {
     try {
-        const filePath = path.join(__dirname, 'matches.json');
-        const data = await fs.readFile(filePath, 'utf8');
-        const matchData = JSON.parse(data);
-        res.json(matchData);
-    } catch (err) {
-        logger.error('讀取 matches.json 失敗', err);
-        res.json({ practice: [], qualification: [] }); 
+        await initDB();
+        app.listen(PORT, () => {
+            logger.info(`Server is running on port ${PORT}`);
+        });
+    } catch (e) {
+        logger.error('Server failed to start', e);
+        process.exit(2);
     }
-});
+}
 
-app.post('/api/save_data', async (req, res) => {
-    try {
-        const d = req.body;
-        const sql = `INSERT INTO records 
-        (team_number, match_id, match_type, station, auto_shot_pos, auto_max_score, auto_climb, fixed_shot_pos, intake, strategy, climb_level, remark) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-        await pool.execute(sql, [
-            d.team_number, d.match_id, d.match_type, d.station, d.auto_shot_pos, d.auto_max_score, 
-            d.auto_climb, d.fixed_shot_pos, d.intake, d.strategy, d.climb_level, d.remark
-        ]);
-        
-        logger.info(`成功新增紀錄: Team ${d.team_number}, Match ${d.match_id}`);
-        res.status(201).json({ message: "儲存成功" });
-    } catch (err) { 
-        logger.error('儲存紀錄失敗', err);
-        res.status(500).json({ error: err.message }); 
-    }
-});
-
-app.get('/api/all_records', async (req, res) => {
-    try {
-        const [rows] = await pool.execute('SELECT * FROM records ORDER BY created_at DESC');
-        res.json(rows);
-    } catch (err) { 
-        logger.error('取得所有紀錄失敗', err);
-        res.status(500).json({ error: err.message }); 
-    }
-});
-
-app.get('/api/team_records/:number', async (req, res) => {
-    try {
-        const [rows] = await pool.execute('SELECT * FROM records WHERE team_number = ? ORDER BY created_at DESC', [req.params.number]);
-        res.json(rows);
-    } catch (err) { 
-        logger.error(`取得 Team ${req.params.number} 紀錄失敗`, err);
-        res.status(500).json({ error: err.message }); 
-    }
-});
-
-app.delete('/api/delete_record/:id', async (req, res) => {
-    try {
-        const id = req.params.id;
-        const [result] = await pool.execute('DELETE FROM records WHERE id = ?', [id]);
-
-        if (result.affectedRows > 0) {
-            logger.info(`已刪除紀錄 ID: ${id}`);
-            res.json({ message: "紀錄已刪除" });
-        } else {
-            res.status(404).json({ error: "找不到該筆紀錄" });
-        }
-    } catch (err) {
-        logger.error(`刪除紀錄 ID ${req.params.id} 失敗`, err);
-        res.status(500).json({ error: err.message });
-    }
-});
-
-app.get(/.*/, (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
-});
-
-const PORT = 3001;
-app.listen(PORT, () => {
-    logger.info(`伺服器啟動成功，運行於連接埠 ${PORT}`);
-});
+startServer();

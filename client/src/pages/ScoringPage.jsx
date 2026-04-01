@@ -8,7 +8,7 @@ const ScoringPage = () => {
     const STATIONS = ["Red 1", "Red 2", "Red 3", "Blue 1", "Blue 2", "Blue 3"];
 
     const [form, setForm] = useState({
-        match_type: 'qulification',
+        match_type: 'qualification',
         match_id: '',
         team_number: '未選擇',
         station: '',
