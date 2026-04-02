@@ -1,6 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
-title FRC System Control Panel
+title System Control Panel
+:: idk
 set PORT=3001
 
 :CHECK_NODE
@@ -29,7 +30,6 @@ goto :MENU
 
 :FETCH_MATCHES
 cls
-:: --- Python Environment Check ---
 python --version >nul 2>&1
 if %ERRORLEVEL% neq 0 (
     echo [ERROR] Python is not installed or not in PATH.
